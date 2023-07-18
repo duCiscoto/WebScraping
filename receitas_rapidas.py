@@ -1,4 +1,4 @@
-from urllib.request import Request, urlopen, urlretrieve
+from urllib.request import Request, urlopen
 from urllib.error import URLError, HTTPError
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -41,7 +41,6 @@ for i in range(pages):
 
     soup = BeautifulSoup(html, 'html.parser')
     
-    # receitas = soup.find('div', {"id": "recipe-list"}).findAll('div', class_="item clearfix")
     receitas = soup.findAll('div', class_="ingredients")
 
     for item in receitas:
@@ -53,7 +52,6 @@ for i in range(pages):
 
         try:
             card['url_imagem'] = url_base + receita.find('div', {'class': 'i-left'}).find('img')['src']
-            # urlretrieve(card['url_imagem'], './output/img/' + imagem_url.split('/')[-1])
         except:
             card['url_imagem'] = 'Indisponível'
 
