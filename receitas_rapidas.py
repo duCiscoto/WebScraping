@@ -1,3 +1,4 @@
+import re
 from urllib.request import Request, urlopen
 from urllib.error import URLError, HTTPError
 from bs4 import BeautifulSoup
@@ -61,12 +62,14 @@ for i in range(pages):
             card['avaliacao'] = 'Indisponível'
         
         try:
-            card['comentarios'] = receita.find('div', {'class': 'ir-vote'}).find('i', {'class': 'fal fa-comments fa-fw'}).getText().strip()
+            comentarios = receita.find('div', {'class': 'ir-vote'}).find('i', {'class': 'fal fa-comments fa-fw'}).nextSibling
+            card['comentarios'] = re.search("\d+", comentarios).group(0)
         except:
             card['comentarios'] = 'Indisponível'
         
         try:
-            card['marcacoes'] = receita.find('div', {'class': 'ir-vote'}).find('i', {'class': 'fal fa-bookmark fa-fw'}).getText().strip()
+            marcacoes = receita.find('div', {'class': 'ir-vote'}).find('i', {'class': 'fal fa-bookmark fa-fw'}).nextSibling
+            card['marcacoes'] = re.search("\d+", marcacoes).group(0)
         except:
             card['marcacoes'] = 'Indisponível'
 
@@ -101,6 +104,8 @@ for i in range(pages):
             card['resumo_ingredientes'] = 'Indisponível'
 
         cards.append(card)
+    
+    print('{} de {} páginas concluídas.'.format(str(i + 1), pages))
 
 dataset = pd.DataFrame(cards)
 dataset.to_csv('./output/data/dataset.csv', sep=';', index=False, encoding='utf-8-sig')
